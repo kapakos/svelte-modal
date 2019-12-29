@@ -1,6 +1,6 @@
 <script>
 import { fade, fly } from 'svelte/transition';
-export let visible = true;
+export let visible = false;
 export let showFooter = true;
 export let showHeader = true;
 export const open = () => {
