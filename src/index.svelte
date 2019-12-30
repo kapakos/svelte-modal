@@ -1,5 +1,6 @@
 <script>
-import { fade, fly } from 'svelte/transition';
+import { fly } from 'svelte/transition';
+	
 export let visible = false;
 export let showFooter = true;
 export let showHeader = true;
@@ -9,16 +10,33 @@ export const open = () => {
 export const close = () => {
 	visible = false;
 }
+
+$: {
+	if(visible){	
+		const backdrop = document.createElement('div');
+		backdrop.setAttribute('style', backdropStyle.trim());
+		backdrop.id = 'modal_backdrop';
+		document.body.appendChild(backdrop);	
+	} else {
+		const del = document.getElementById('modal_backdrop');
+		if(del){
+			del.remove();
+		}		
+	}
+}
+
+const backdropStyle = `
+	position: fixed;
+	background: rgb(0.3,0.3,0.3, 0.3);
+	z-index: 5;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+`;
+
 </script>
 <style>
-	.modal_container {
-		position: absolute;
-		background: rgb(0.3,0.3,0.3, 0.3);
-		width: 100%;
-		height: 100%;
-		z-index: 5;
-		left: 0;
-	}
 	.modal {
 		position: fixed;
 		left: 10%;
@@ -40,7 +58,6 @@ export const close = () => {
   	align-items: center;
 		justify-content: center;
 	}
-	
 	.modal_header {
 		display: flex;
   	align-items: center;
@@ -65,34 +82,32 @@ export const close = () => {
 	.modal__footer-button:first-child {
 		margin-right: 50px;
 	}
-	
 </style>
+
 {#if visible}
-<div transition:fade={{duration: 300}} class="modal_container">
-	<div transition:fly="{{ y: -100, duration: 300 }}" class="modal">
-		<div class="modal_content">
-			{#if showHeader}
-			<div class="modal_header">
-				<slot name="header_logo" />
-				<slot name="header_title" />
-			</div>
-			{/if}
-			<div class="modal_main">
-				<slot>...Enter some content</slot>
-			</div>
-			{#if showFooter}
-			<div class="modal_footer">
-				<slot name="footer">
-					<button class="modal__footer-button" on:click={close}>
-						Accept
-					</button>
-					<button class="modal__footer-button" on:click={close}>
-						Cancel
-					</button>
-				</slot>
-			</div>
-			{/if}
+<div transition:fly="{{ y: -100, duration: 300 }}" class="modal">
+	<div class="modal_content">
+		{#if showHeader}
+		<div class="modal_header">
+			<slot name="header_logo" />
+			<slot name="header_title" />
 		</div>
+		{/if}
+		<div class="modal_main">
+			<slot>...Enter some content</slot>
+		</div>
+		{#if showFooter}
+		<div class="modal_footer">
+			<slot name="footer">
+				<button class="modal__footer-button" on:click={close}>
+					Accept
+				</button>
+				<button class="modal__footer-button" on:click={close}>
+					Cancel
+				</button>
+			</slot>
+		</div>
+		{/if}
 	</div>
 </div>
 {/if}
