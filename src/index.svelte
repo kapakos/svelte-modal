@@ -1,5 +1,5 @@
 <script>
-import { fly } from 'svelte/transition';
+import { fade } from 'svelte/transition';
 	
 export let visible = false;
 export let showFooter = true;
@@ -11,30 +11,9 @@ export const close = () => {
 	visible = false;
 }
 
-$: {
-	if(visible){	
-		const backdrop = document.createElement('div');
-		backdrop.setAttribute('style', backdropStyle.trim());
-		backdrop.id = 'modal_backdrop';
-		document.body.appendChild(backdrop);	
-	} else {
-		const del = document.getElementById('modal_backdrop');
-		if(del){
-			del.remove();
-		}		
-	}
+const showBackdrop = (node) => {
+  document.body.appendChild(node);
 }
-
-const backdropStyle = `
-	position: fixed;
-	background: rgb(0.3,0.3,0.3, 0.3);
-	z-index: 5;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-`;
-
 </script>
 <style>
 	.modal {
@@ -47,7 +26,8 @@ const backdropStyle = `
 		background: white;
 		box-shadow: 0px 0px 10px rgb(0.5,0.5,0.5, 0.5);
 	}
-	.modal_footer {
+
+	.modal__footer { 
 		border-top: 1px solid lightGrey;
 		position: absolute;
 		bottom: 0;
@@ -58,7 +38,8 @@ const backdropStyle = `
   	align-items: center;
 		justify-content: center;
 	}
-	.modal_header {
+  
+	.modal__header {
 		display: flex;
   	align-items: center;
 		left: 0;
@@ -68,9 +49,21 @@ const backdropStyle = `
 		padding-left: 20px;
 		box-shadow: 0px 0px 5px rgb(0.5,0.5,0.5, 0.5);
 	}
-	.modal_main {
+
+	.modal__main {
 		padding: 20px;
 	}
+
+  .modal__backdrop {
+	  position: fixed;
+	  background: rgb(0.3,0.3,0.3, 0.3);
+	  z-index: 5;
+	  left: 0;
+	  right: 0;
+	  top: 0;
+	  bottom: 0;
+  }
+
 	.modal__footer-button {
 		width: 100px;
 		background: white;
@@ -79,25 +72,26 @@ const backdropStyle = `
 		box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16);		
 		margin: 0;
 	}
+
 	.modal__footer-button:first-child {
 		margin-right: 50px;
 	}
 </style>
 
 {#if visible}
-<div transition:fly="{{ y: -100, duration: 300 }}" class="modal">
-	<div class="modal_content">
+<div transition:fade="{{ duration: 200 }}" class="modal">
+	<div class="modal__content">
 		{#if showHeader}
-		<div class="modal_header">
-			<slot name="header_logo" />
-			<slot name="header_title" />
+		<div class="modal__header">
+			<slot name="header__logo" />
+			<slot name="header__title" />
 		</div>
 		{/if}
-		<div class="modal_main">
+		<div class="modal__main">
 			<slot>...Enter some content</slot>
 		</div>
 		{#if showFooter}
-		<div class="modal_footer">
+		<div class="modal__footer">
 			<slot name="footer">
 				<button class="modal__footer-button" on:click={close}>
 					Accept
@@ -110,4 +104,5 @@ const backdropStyle = `
 		{/if}
 	</div>
 </div>
+<div transition:fade="{{duration: 200 }}" class="modal__backdrop" use:showBackdrop />
 {/if}

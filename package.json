@@ -1,6 +1,6 @@
 {
   "name": "svelte-modal",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "svelte": "src/index.svelte",
   "module": "index.mjs",
   "main": "index.js",
