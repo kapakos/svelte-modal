@@ -4,6 +4,8 @@ import { fade } from 'svelte/transition';
 export let visible = false;
 export let showFooter = true;
 export let showHeader = true;
+export let fullScreen = false;
+
 export const open = () => {
 	visible = true;
 }
@@ -76,10 +78,16 @@ const showBackdrop = (node) => {
 	.modal__footer-button:first-child {
 		margin-right: 50px;
 	}
+  .fullScreen {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
 </style>
 
 {#if visible}
-<div transition:fade="{{ duration: 200 }}" class="modal">
+<div transition:fade="{{ duration: 200 }}" class="modal" class:fullScreen>
 	<div class="modal__content">
 		{#if showHeader}
 		<div class="modal__header">
